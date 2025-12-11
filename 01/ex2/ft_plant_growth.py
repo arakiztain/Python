@@ -4,31 +4,25 @@ class Plant():
 		self.height_cm = height_cm
 		self.age_days = age_days
 
-	def display_info(self):
+	def get_info(self):
 		print(f"{self.name.capitalize()}: {self.height_cm}cm, {self.age_days} days old")
 
-	def grow(self, growth_per_day_cm):
-		self.height_cm += growth_per_day_cm
+	def grow(self):
+		self.height_cm += 1
 
 	def age(self, days):
 		self.age_days += days
 
 if __name__ == "__main__":
-	print("=== Plant Growth Simulation ===")
-	# Create a plant instance
 	rose = Plant("Rose", 25, 30)
 	
-	# Display initial info
 	print("=== Day 1 ===")
-	rose.display_info()
+	rose.get_info()
 	
-	# Simulate growth over 10 days
 	days_to_simulate = 7
-	growth_per_day_cm = 1  # Rose grows 2 cm per day
-	for day in range(days_to_simulate):
-		rose.grow(growth_per_day_cm)
+	for day in range(days_to_simulate - 1):
+		rose.grow()
 		rose.age(1)
 	
-	# Display final info after simulation
-	print(f"\nAfter {days_to_simulate} days of growth:")
-	rose.display_info()
+	print(f"=== Day {days_to_simulate} ===")
+	rose.get_info()
