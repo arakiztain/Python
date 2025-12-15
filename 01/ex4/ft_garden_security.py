@@ -18,7 +18,6 @@ class SecurePlant:
         self._age = age if age >= 0 else 0
         print("Plant created:", self._name)
 
-    # --- GETTERS ---
     def get_height(self):
         """Returns the height of the plant in cm."""
         return self._height
@@ -27,7 +26,6 @@ class SecurePlant:
         """Returns the age of the plant in days."""
         return self._age
 
-    # --- SETTERS ---
     def set_height(self, new_height):
         """
         Safely sets the height of the plant.
