@@ -32,7 +32,10 @@ class SecurePlant:
         Rejects negative values with an error message.
         """
         if new_height < 0:
-            print(f"Invalid operation attempted: height {new_height}cm [REJECTED]")
+            print(
+                f"Invalid operation attempted: "
+                f"height {new_height}cm [REJECTED]"
+                )
             print("Security: Negative height rejected")
         else:
             self._height = new_height
@@ -44,7 +47,10 @@ class SecurePlant:
         Rejects negative values with an error message.
         """
         if new_age < 0:
-            print(f"Invalid operation attempted: age {new_age} days [REJECTED]")
+            print(
+                f"Invalid operation attempted: "
+                f"age {new_age} days [REJECTED]"
+                )
             print("Security: Negative age rejected")
         else:
             self._age = new_age
@@ -52,7 +58,9 @@ class SecurePlant:
 
     def show(self):
         """Prints the current state of the plant."""
-        print(f"Current plant: {self._name} ({self._height}cm, {self._age} days)")
+        print(
+            f"Current plant: {self._name} "
+            f"({self._height}cm, {self._age} days)")
 
 
 if __name__ == "__main__":

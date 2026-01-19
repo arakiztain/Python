@@ -22,26 +22,35 @@ class Flower(Plant):
         print(f"{self.name} is blooming beautifully!")
 
     def show(self):
-        return f"{self.name} (Flower): {self.height}cm, {self.age} days, {self.color} color"
+        return (
+            f"{self.name} (Flower): {self.height}cm, "
+            f"{self.age} days, {self.color} color"
+                )
 
 
 class Tree(Plant):
-    """Tree class: inherits Plant, adds trunk_diameter and produce_shade() method."""
+    """Tree class: inherits Plant, adds
+    trunk_diameter and produce_shade() method."""
 
     def __init__(self, name, height, age, trunk_diameter):
         super().__init__(name, height, age)
         self.trunk_diameter = trunk_diameter
 
     def produce_shade(self):
-        shade_area = self.height * self.trunk_diameter / 10
-        print(f"{self.name} provides {shade_area:.0f} square meters of shade")
+        radius = self.trunk_diameter / 2
+        shade_area = 3.14 * (radius ** 2) / 25
+        print(f"{self.name} provides {shade_area:.0f} square meters of shade.")
 
     def show(self):
-        return f"{self.name} (Tree): {self.height}cm, {self.age} days, {self.trunk_diameter}cm diameter"
+        return (
+            f"{self.name} (Tree): {self.height}cm, "
+            f"{self.age} days, {self.trunk_diameter}cm diameter"
+            )
 
 
 class Vegetable(Plant):
-    """Vegetable class: inherits Plant, adds harvest season and nutritional value."""
+    """Vegetable class: inherits Plant, adds
+    harvest season and nutritional value."""
 
     def __init__(self, name, height, age, harvest_season, nutritional_value):
         super().__init__(name, height, age)
@@ -52,7 +61,10 @@ class Vegetable(Plant):
         print(f"{self.name} is rich in {self.nutritional_value}")
 
     def show(self):
-        return f"{self.name} (Vegetable): {self.height}cm, {self.age} days, {self.harvest_season} harvest"
+        return (
+            f"{self.name} (Vegetable): {self.height}cm, "
+            f"{self.age} days, {self.harvest_season} harvest"
+                )
 
 
 if __name__ == "__main__":

@@ -203,17 +203,24 @@ class GardenManager:
         """
         Create a network analysis across multiple gardens.
 
+        The score for each garden is calculated as the sum of:
+        - The height of all plants in the garden
+        - Additional points for prize flowers, calculated as
+        prize_points multiplied by 4
+
         Args:
             *gardens: Variable number of GardenManager instances.
 
         Returns:
-            dict: Mapping of garden owners to total garden scores.
+            dict: Mapping of garden owners to their total garden scores.
         """
         scores = {}
         for garden in gardens:
             total = 0
             for plant in garden.plants:
                 total += plant.height
+                if isinstance(plant, PrizeFlower):
+                    total += plant.prize_points * 4
             scores[garden.owner] = total
         return scores
 
