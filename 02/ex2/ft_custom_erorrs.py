@@ -2,9 +2,11 @@ class GardenError(Exception):
     """Base error for garden-related problems."""
     pass
 
+
 class PlantError(GardenError):
     """Error for plant-related problems."""
     pass
+
 
 class WaterError(GardenError):
     """Error for watering-related problems."""
@@ -38,30 +40,29 @@ def test_custom_errors():
     - Prints messages to demonstrate proper error handling.
     """
     print("=== Custom Garden Errors Demo ===\n")
-    
     print("Testing PlantError...")
     try:
         test_plant_error()
     except PlantError as e:
         print(f"Caught PlantError: {e}\n")
-    
     print("Testing WaterError...")
+
     try:
         test_water_error()
     except WaterError as e:
         print(f"Caught WaterError: {e}\n")
-    
     print("Testing catching all garden errors...")
+
     try:
         test_plant_error()
     except GardenError as e:
         print(f"Caught a garden error: {e}")
-    
+
     try:
         test_water_error()
     except GardenError as e:
         print(f"Caught a garden error: {e}\n")
-    
+
     print("All custom error types work correctly!")
 
 

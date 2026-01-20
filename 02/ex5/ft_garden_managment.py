@@ -12,10 +12,15 @@ class WaterError(GardenError):
     """Exception raised for errors related to the watering system."""
     pass
 
+
 class GardenManager:
     """
-    A simple manager for a garden that can add plants, water them, 
+    A simple manager for a garden that can add plants, water them,
     and check their health using custom error handling.
+
+    Attributes:
+        plants (dict): Dictionary storing plants with their water
+        and sunlight levels.
     """
 
     def __init__(self):
@@ -26,13 +31,13 @@ class GardenManager:
         """
         Add a new plant to the garden.
 
-        Parameters:
-        - name (str): The name of the plant. Must not be empty.
-        - water_level (int): Initial water level for the plant.
-        - sunlight_hours (int): Daily sunlight exposure for the plant.
+        Args:
+            name (str): The name of the plant. Must not be empty.
+            water_level (int): Initial water level for the plant.
+            sunlight_hours (int): Daily sunlight exposure for the plant.
 
         Raises:
-        - PlantError: If the plant name is empty.
+            PlantError: If the plant name is empty.
         """
         if not name:
             raise PlantError("Plant name cannot be empty!")
@@ -47,10 +52,12 @@ class GardenManager:
         Water all plants in the garden.
 
         Raises:
-        - WaterError: If there are no plants to water.
-        
-        The watering system is always closed after attempting to water,
-        using a finally block to ensure cleanup.
+            WaterError: If there are no plants to water.
+
+        Notes:
+            This method always closes the watering system
+            using a `finally` block
+            to ensure proper cleanup.
         """
         print("Opening watering system")
         try:
@@ -63,14 +70,15 @@ class GardenManager:
 
     def check_plant_health(self, name):
         """
-        Check the health of a specific plant.
+        Check the health of a specific plant based on water
+        and sunlight levels.
 
-        Parameters:
-        - name (str): Name of the plant to check.
+        Args:
+            name (str): Name of the plant to check.
 
         Raises:
-        - PlantError: If the plant does not exist.
-        - PlantError: If water level or sunlight hours are outside acceptable ranges.
+            PlantError: If the plant does not exist or has
+            water/sunlight levels outside acceptable ranges.
         """
         if name not in self.plants:
             raise PlantError(f"Plant '{name}' not found")
@@ -89,22 +97,29 @@ class GardenManager:
 
         print(f"{name}: healthy (water: {water}, sun: {sun})")
 
+
 if __name__ == "__main__":
     """
-    Test the GardenManager by adding plants, watering them, checking their health,
-    and demonstrating error recovery and handling with custom exceptions.
+    Test the GardenManager by adding plants, watering them,
+    checking their health, and demonstrating error recovery
+    using custom exceptions.
     """
     print("=== Garden Management System ===\n")
 
     garden = GardenManager()
 
     print("Adding plants to garden...")
-    try:
-        garden.add_plant("tomato", 5, 8)
-        garden.add_plant("lettuce", 15, 6)
-        garden.add_plant("", 3, 6)
-    except PlantError as e:
-        print(f"Error adding plant: {e}")
+    plants_to_add = [
+        ("tomato", 5, 8),
+        ("lettuce", 15, 6),
+        ("", 3, 6)
+    ]
+
+    for plant in plants_to_add:
+        try:
+            garden.add_plant(*plant)
+        except PlantError as e:
+            print(f"Error adding plant: {e}")
 
     print("\nWatering plants...")
     try:

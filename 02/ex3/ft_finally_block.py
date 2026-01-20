@@ -14,12 +14,12 @@ def water_plants(plant_list):
                 success = False
                 raise Exception
             print(f"Watering {plant}")
-    except:
+    except (Exception):
         print("Error: Cannot water None - invalid plant!")
         success = False
     finally:
         print("Closing watering system (cleanup)")
-    
+
     if success:
         print("Watering completed successfully!")
 
@@ -32,13 +32,10 @@ def test_watering_system():
     and that cleanup always occurs.
     """
     print("=== Garden Watering System ===\n")
-    
     print("Testing normal watering...")
     water_plants(["tomato", "lettuce", "carrots"])
-    
     print("\nTesting with error...")
     water_plants(["tomato", None])
-    
     print("\nCleanup always happens, even with errors!")
 
 
