@@ -1,5 +1,16 @@
 import time
 
+"""
+Game Data Stream Processor
+
+Processes a list of game events and generates analytics:
+- Counts total events
+- Tracks high-level players (level 10+)
+- Counts level-up and treasure events
+- Demonstrates generators with Fibonacci and prime numbers
+"""
+
+
 data = [
     {
         'id': 1, 'player': 'frank', 'event_type': 'login', 'timestamp':
@@ -303,60 +314,49 @@ data = [
     }
 ]
 
-start = time.time()
-
-print("=== Game Data Stream Processor ===\n")
-print(f"Processing {len(data)} game events...\n")
-
 
 def generate_events(data):
+    """
+    Generator that yields game event details.
+
+    Yields:
+        tuple: (event id, player name, event type, player level)
+    """
     for event in data:
-        yield event["id"], event["player"], event["event_type"],
-        event.get("data")["level"]
-
-
-count = 0
-high_level = 0
-level_up = 0
-treasure = 0
-for id, player, event_type, level in generate_events(data):
-    count += 1
-    print(f"Event {id}: Player {player} (level {level}) {event_type}")
-    if (level >= 10):
-        high_level += 1
-    if (event_type == "level_up"):
-        level_up += 1
-    elif (event_type == "item_found"):
-        treasure += 1
-
-end = time.time()
-
-print("\n=== Stream Analytics ===")
-print(f"Total events processed: {count}")
-
-
-print(f"High-level players (10+): {high_level}")
-print(f"Treasaure events: {treasure}")
-print(f"Level-up events: {level_up}")
-
-print("\nMemory usage: Constant (streaming)")
-print(f"Proccesing tiem: {(end - start):.10f} seconds")
+        yield (
+            event["id"],
+            event["player"],
+            event["event_type"],
+            event.get("data")["level"]
+        )
 
 
 def fibo(n):
+    """
+    Generator for the first n Fibonacci numbers.
+
+    Args:
+        n (int): Number of Fibonacci numbers to generate.
+
+    Yields:
+        int: Next Fibonacci number.
+    """
     a, b = 0, 1
     for _ in range(n):
         yield a
         a, b = b, a + b
 
 
-def primes(limit):
-    for num in range(2, limit + 1):
-        if is_prime(num):
-            yield num
-
-
 def is_prime(n):
+    """
+    Check if a number is prime.
+
+    Args:
+        n (int): Number to check.
+
+    Returns:
+        bool: True if n is prime, False otherwise.
+    """
     if n < 2:
         return False
     for i in range(2, int(n**0.5) + 1):
@@ -365,16 +365,67 @@ def is_prime(n):
     return True
 
 
-fibonacci = [str(x) for x in fibo(10)]
-prime = [str(num) for num in primes(20)]
+def primes(limit):
+    """
+    Generator that yields all prime numbers up to a given limit.
+
+    Args:
+        limit (int): Upper limit for prime numbers.
+
+    Yields:
+        int: Next prime number.
+    """
+    for num in range(2, limit + 1):
+        if is_prime(num):
+            yield num
 
 
-print("\n=== Generator Demonstration ===")
-""" print("Fibonacci sequence (first 10):", ", ".join(fibonacci))
-print("Prime numbers (first 5):", ", ".join(prime[:5])) """
+def ft_data_stream():
+    """Main function to process events and demonstrate generators."""
+    start = time.time()
 
-print("Fibonacci sequence (first 10): ", end="")
-print(*fibonacci, sep=", ")
+    print("=== Game Data Stream Processor ===\n")
+    print(f"Processing {len(data)} game events...\n")
 
-print("Prime numbers (first 5): ", end="")
-print(*prime[:5], sep=", ")
+    count = 0
+    high_level = 0
+    level_up = 0
+    treasure = 0
+
+    for event_id, player, event_type, level in generate_events(data):
+        count += 1
+        print(
+            f"Event {event_id}: Player {player} "
+            f"(level {level}) {event_type}"
+            )
+
+        if level >= 10:
+            high_level += 1
+        if event_type == "level_up":
+            level_up += 1
+        elif event_type == "item_found":
+            treasure += 1
+
+    end = time.time()
+
+    print("\n=== Stream Analytics ===")
+    print(f"Total events processed: {count}")
+    print(f"High-level players (10+): {high_level}")
+    print(f"Treasure events: {treasure}")
+    print(f"Level-up events: {level_up}")
+    print("\nMemory usage: Constant (streaming)")
+    print(f"Processing time: {(end - start):.10f} seconds")
+
+    fibonacci = [str(x) for x in fibo(10)]
+    prime_numbers = [str(x) for x in primes(20)]
+
+    print("\n=== Generator Demonstration ===")
+    print("Fibonacci sequence (first 10): ", end="")
+    print(*fibonacci, sep=", ")
+
+    print("Prime numbers (first 5): ", end="")
+    print(*prime_numbers[:5], sep=", ")
+
+
+if __name__ == "__main__":
+    ft_data_stream()

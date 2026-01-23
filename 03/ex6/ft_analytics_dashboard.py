@@ -1,3 +1,18 @@
+"""
+Game Analytics Dashboard
+
+This script analyzes game data using list, dict, and set comprehensions.
+It computes:
+- High scorers
+- Doubled scores
+- Active players
+- Player scores
+- Mode counts
+- Achievement counts
+- Unique players, achievements, and regions
+- Combined statistics like top performer and average score
+"""
+
 data = {
     'players': {
         'alice': {
@@ -162,48 +177,74 @@ data = {
     ]
 }
 
-print("=== Game Analytics Dashboard ===\n")
-print("=== List Comprehension Examples ===")
-# high score > 2000
-players = data.get("players")
-sessions = data.get("sessions")
-high_score = [x for x, y in players.items() if y["total_score"] > 2000]
-print(f"High scorers (>2000): {high_score}")
-doubled = [x["score"]*2 for x in sessions]
-print(f"Scores doubled: {doubled}")
-active = [x for x in players.keys()]
-print(f"Active players: {active}")
 
-print("\n=== Dict Comprehension Examples ===")
-player_score = {x: y["total_score"] for x, y in players.items()}
-print(f"Player scores: {player_score}")
+def ft_analytics_dashboard():
+    """Main function to run the analytics dashboard."""
 
-all_modes = [s['mode'] for s in data['sessions']]
-mode_counts = {m: all_modes.count(m) for m in data['game_modes']}
-print(f"Score categories: {mode_counts}")
+    players = data.get("players")
+    sessions = data.get("sessions")
 
-ach_count = {x: y["achievements_count"] for x, y in players.items()}
-print(f"Achievement counts: {ach_count}")
+    print("=== Game Analytics Dashboard ===\n")
 
-print("\n=== Set Comprehension Examples ===")
-unique_players = {x["player"] for x in sessions}
-print(f"Unique players: {unique_players}")
-unique_achievements = {x for x in data.get("achievements")}
-print(f"Unique achievements: {unique_achievements}")
-active_regions = {x["region"] for x in players.values()}
-print(f"Active regions: {active_regions}")
+    print("=== List Comprehension Examples ===")
 
-print("\n=== Combined Analysis ===")
-print(f"Total players: {len(unique_players)}")
-print(f"Total achievement: {len(unique_achievements)}")
-score_list = [x["score"] for x in sessions]
-print(f"Average score: {sum(score_list) / len(score_list):.2f}")
-perfomers = {
-    x: [y["total_score"], y["achievements_count"]] for x, y in players.items()
-}
-best_perf = max(perfomers, key=perfomers.get)
-stats = players.get(best_perf)
-score = stats['total_score']
-achs = stats['achievements_count']
+    high_score = [
+        name for name, info in players.items() if info["total_score"] > 2000
+        ]
+    print(f"High scorers (>2000 points): {high_score}")
 
-print(f"Top performer: {best_perf} ({score} points, {achs} achievements)")
+    doubled_scores = [s["score"]*2 for s in sessions]
+    print(f"Scores doubled: {doubled_scores}")
+
+    active_players = [name for name in players.keys()]
+    print(f"Active players: {active_players}")
+
+    print("\n=== Dict Comprehension Examples ===")
+
+    player_scores = {
+        name: info["total_score"] for name, info in players.items()
+        }
+    print(f"Player scores: {player_scores}")
+
+    all_modes = [s['mode'] for s in sessions]
+    mode_counts = {
+        mode: all_modes.count(mode) for mode in data['game_modes']
+        }
+    print(f"Game mode counts: {mode_counts}")
+
+    achievement_counts = {
+        name: info["achievements_count"] for name, info in players.items()
+        }
+    print(f"Achievement counts: {achievement_counts}")
+
+    print("\n=== Set Comprehension Examples ===")
+
+    unique_players = {s["player"] for s in sessions}
+    print(f"Unique players in sessions: {unique_players}")
+
+    unique_achievements = {ach for ach in data.get("achievements")}
+    print(f"Unique achievements: {unique_achievements}")
+
+    active_regions = {info["region"] for info in players.values()}
+    print(f"Active regions: {active_regions}")
+
+    print("\n=== Combined Analysis ===")
+
+    print(f"Total players: {len(unique_players)}")
+    print(f"Total achievements: {len(unique_achievements)}")
+
+    score_list = [s["score"] for s in sessions]
+    average_score = sum(score_list) / len(score_list)
+    print(f"Average score per session: {average_score:.2f}")
+
+    performers = {name: [info["total_score"], info["achievements_count"]]
+                  for name, info in players.items()}
+
+    top_performer = max(performers, key=performers.get)
+    stats = players.get(top_performer)
+    print(f"Top performer: {top_performer} ({stats['total_score']} points, "
+          f"{stats['achievements_count']} achievements)")
+
+
+if __name__ == "__main__":
+    ft_analytics_dashboard()
