@@ -1,3 +1,13 @@
+"""
+ft_crisis_response.py
+
+A crisis response system for the Cyber Archives.
+Attempts to access multiple archive files, handling exceptions
+gracefully to simulate different crisis scenarios (lost files,
+security restrictions, and routine access). Ensures safe file
+operations using 'with' statements.
+"""
+
 print("=== CYBER ARCHIVES - CRISIS RESPONSE SYSTEM ===\n")
 
 archives_to_access = [
@@ -13,14 +23,12 @@ for archive in archives_to_access:
             content = vault.read().strip()
     except FileNotFoundError:
         print("RESPONSE: Archive not found in storage matrix")
+        print("STATUS: Crisis handled, system stable\n")
     except PermissionError:
         print("RESPONSE: Security protocols deny access")
+        print("STATUS: Crisis handled, security maintained\n")
     else:
         print(f"SUCCESS: Archive recovered - ``{content}''")
-    finally:
-        if archive == "standard_archive.txt":
-            print("STATUS: Normal operations resumed\n")
-        else:
-            print("STATUS: Crisis handled, system stable\n" if archive == "lost_archive.txt" else "STATUS: Crisis handled, security maintained\n")
+        print("STATUS: Normal operations resumed\n")
 
 print("All crisis scenarios handled successfully. Archives secure.")
