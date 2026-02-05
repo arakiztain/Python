@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict, Union, Optional
+from typing import Any, List, Dict, Union, Optional, Tuple
 
 
 class DataStream(ABC):
@@ -29,21 +29,26 @@ class DataStream(ABC):
 class SensorStream(DataStream):
     """Stream for environmental sensor data."""
 
-    def process_batch(self, data_batch: List[Any]) -> str:
-        self.processed_count += len(data_batch)
-        tmps = [v for k, v in data_batch if k == "temp"]
-        avg_temp = sum(tmps) / len(tmps) if tmps else 0.0
-        return (
-            f"Sensor analysis: {len(data_batch)} "
-            f"readings processed, avg temp: {avg_temp}°C"
-        )
+    def process_batch(self, data_batch: List[Tuple[str, float]]) -> str:
+        try:
+            self.processed_count += len(data_batch)
+            temps = [v for k, v in data_batch if k == "temp"]
+            avg_temp = sum(temps) / len(temps) if temps else 0.0
+            return (f"[SENSOR] {len(data_batch)} readings"
+                    f" processed, avg temp: {avg_temp}°C")
+        except Exception as e:
+            return f"[SENSOR] Processing error: {e}"
 
     def filter_data(
-            self, data_batch: List[Any], criteria: Optional[str] = None
-            ) -> List[Any]:
+        self,
+        data_batch: List[Tuple[str, float]],
+        criteria: Optional[str] = None
+    ) -> List[Tuple[str, float]]:
         if criteria == "critical":
             return (
-                [itm for itm in data_batch if itm[0] in ("temp", "humidity")]
+                [item for item in data_batch if item[0] in (
+                    "temp", "humidity"
+                    )]
                 )
         return data_batch
 
@@ -58,21 +63,24 @@ class SensorStream(DataStream):
 class TransactionStream(DataStream):
     """Stream for financial transaction data."""
 
-    def process_batch(self, data_batch: List[Any]) -> str:
-        self.processed_count += len(data_batch)
-        net_flow = sum(
-            amount if action == "buy" else -amount
-            for action, amount in data_batch
-            )
-        sign = "+" if net_flow >= 0 else ""
-        return (
-            f"Transaction analysis: {len(data_batch)} operations,"
-            f" net flow: {sign}{net_flow} units"
-            )
+    def process_batch(self, data_batch: List[Tuple[str, int]]) -> str:
+        try:
+            self.processed_count += len(data_batch)
+            net_flow = sum(
+                amount if action == "buy" else -amount for action,
+                amount in data_batch
+                )
+            sign = "+" if net_flow >= 0 else ""
+            return (
+                f"[TRANSACTION] {len(data_batch)} operations, net"
+                f" flow: {sign}{net_flow} units"
+                )
+        except Exception as e:
+            return f"[TRANSACTION] Processing error: {e}"
 
     def filter_data(
-            self, data_batch: List[Any], criteria: Optional[str] = None
-            ) -> List[Any]:
+        self, data_batch: List[Tuple[str, int]], criteria: Optional[str] = None
+    ) -> List[Tuple[str, int]]:
         if criteria == "large":
             return [item for item in data_batch if item[1] >= 150]
         return data_batch
@@ -88,17 +96,22 @@ class TransactionStream(DataStream):
 class EventStream(DataStream):
     """Stream for system event data."""
 
-    def process_batch(self, data_batch: List[Any]) -> str:
-        self.processed_count += len(data_batch)
-        error_count = len([event for event in data_batch if event == "error"])
-        return (
-            f"Event analysis: {len(data_batch)} events,"
-            f" {error_count} error detected"
+    def process_batch(self, data_batch: List[str]) -> str:
+        try:
+            self.processed_count += len(data_batch)
+            error_count = len(
+                [event for event in data_batch if event == "error"]
                 )
+            return (
+                f"[EVENT] {len(data_batch)} events,"
+                f" {error_count} error detected"
+                )
+        except Exception as e:
+            return f"[EVENT] Processing error: {e}"
 
     def filter_data(
-            self, data_batch: List[Any], criteria: Optional[str] = None
-            ) -> List[Any]:
+        self, data_batch: List[str], criteria: Optional[str] = None
+    ) -> List[str]:
         if criteria == "error":
             return [event for event in data_batch if event == "error"]
         return data_batch
@@ -135,14 +148,15 @@ for stream, data in zip(streams, data_batches):
     print(f"Stream ID: {stats['stream_id']}, Type: {stats['type']}")
     filtered_data = stream.filter_data(data)
     if isinstance(stream, (SensorStream, TransactionStream)):
-        display_data = "[" + ", ".join(
-            f"{k}:{v}" for k, v in filtered_data
-            ) + "]"
+        display_data = (
+            "[" + ", ".join(f"{k}:{v}" for k, v in filtered_data) + "]"
+            )
     else:
         display_data = "[" + ", ".join(filtered_data) + "]"
     print(
-        f"Processing {stream.__class__.__name__.replace('Stream', '').lower()}"
-        f" batch: {display_data}"
+        f"Processing "
+        f"{stream.__class__.__name__.replace('Stream', '').lower()} batch:"
+        f" {display_data}"
         )
     print(stream.process_batch(filtered_data))
     print()
@@ -161,9 +175,9 @@ print("Batch 1 Results:")
 for stream, batch in zip(streams, mixed_batches):
     filtered_bch = stream.filter_data(batch)
     stream.process_batch(filtered_bch)
+    data_type = stream.get_stats()['type'].split()[0]
     print(
-        f"- {stream.get_stats()['type'].split()[0]} data:"
-        f" {len(filtered_bch)} {stream.get_stats()['type'].split()[0].lower()}"
+        f"- {data_type} data: {len(filtered_bch)} {data_type.lower()} "
         "processed"
         )
 
@@ -174,7 +188,7 @@ print("Stream filtering active: High-priority data only")
 print(
     f"Filtered results: {len(critical_sensors)} critical sensor alerts,"
     f" {len(large_transactions)} large transaction"
-)
+    )
 
 print()
 print("All streams processed successfully. Nexus throughput optimal.")

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any, List, Union
 
 
 class DataProcessor(ABC):
@@ -7,13 +7,16 @@ class DataProcessor(ABC):
 
     @abstractmethod
     def process(self, data: Any) -> str:
+        """Process the data and return a result string."""
         pass
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
+        """Validate if data is appropriate for this processor."""
         pass
 
     def format_output(self, result: str) -> str:
+        """Default output formatting, can be overridden."""
         return result
 
 
@@ -21,21 +24,23 @@ class NumericProcessor(DataProcessor):
     """Processor for numeric list data."""
 
     def validate(self, data: Any) -> bool:
-        if not isinstance(data, list):
-            return False
-        try:
-            return all(isinstance(x, (int, float)) for x in data)
-        except TypeError:
-            return False
+        return (
+            isinstance(data, list) and all(
+                isinstance(x, (int, float)) for x in data
+                )
+            )
 
-    def process(self, data: List[Any]) -> str:
-        total = sum(data)
-        count = len(data)
-        avg = total / count if count else 0.0
-        return f"Processed {count} numeric values, sum={total}, avg={avg}"
+    def process(self, data: List[Union[int, float]]) -> str:
+        try:
+            count = len(data)
+            total = sum(data)
+            avg = total / count if count else 0.0
+            return f"Processed {count} numeric values, sum={total}, avg={avg}"
+        except Exception as e:
+            return f"Numeric processing error: {e}"
 
     def format_output(self, result: str) -> str:
-        return result
+        return f"[NUMERIC] {result}"
 
 
 class TextProcessor(DataProcessor):
@@ -45,12 +50,15 @@ class TextProcessor(DataProcessor):
         return isinstance(data, str)
 
     def process(self, data: str) -> str:
-        chars = len(data)
-        words = len(data.split())
-        return f"Processed text: {chars} characters, {words} words"
+        try:
+            chars = len(data)
+            words = len(data.split())
+            return f"Processed text: {chars} characters, {words} words"
+        except Exception as e:
+            return f"Text processing error: {e}"
 
     def format_output(self, result: str) -> str:
-        return result
+        return f"[TEXT] {result}"
 
 
 class LogProcessor(DataProcessor):
@@ -72,10 +80,11 @@ class LogProcessor(DataProcessor):
         return f"{prefix} {level} level detected: {message}"
 
     def format_output(self, result: str) -> str:
-        return result
+        return f"[LOG] {result}"
 
 
-print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===\n")
+print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===")
+print()
 
 numeric_processor: DataProcessor = NumericProcessor()
 numeric_data = [1, 2, 3, 4, 5]
@@ -94,7 +103,7 @@ text_processor: DataProcessor = TextProcessor()
 text_data = "Hello Nexus World"
 
 print("Initializing Text Processor...")
-print('Processing data: "Hello Nexus World"')
+print(f'Processing data: "{text_data}"')
 
 if text_processor.validate(text_data):
     print("Validation: Text data verified")
@@ -107,15 +116,15 @@ log_processor: DataProcessor = LogProcessor()
 log_data = "ERROR: Connection timeout"
 
 print("Initializing Log Processor...")
-print('Processing data: "ERROR: Connection timeout"')
+print(f'Processing data: "{log_data}"')
 
 if log_processor.validate(log_data):
     print("Validation: Log entry verified")
-    print("Output:", log_processor.format_output(
-        log_processor.process(log_data)
-    ))
-print()
+    print(
+        "Output:", log_processor.format_output(log_processor.process(log_data))
+    )
 
+print()
 print("=== Polymorphic Processing Demo ===")
 print("Processing multiple data types through same interface...")
 

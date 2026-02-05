@@ -4,13 +4,11 @@ import time
 from collections import defaultdict
 
 
-# ===================== PROTOCOL =====================
 class ProcessingStage(Protocol):
     def process(self, data: Any) -> Any:
         ...
 
 
-# ===================== PIPELINE BASE =====================
 class ProcessingPipeline(ABC):
     _structure_announced: bool = False
 
@@ -54,7 +52,6 @@ class ProcessingPipeline(ABC):
         return self.stats
 
 
-# ===================== STAGES =====================
 class InputStage:
     def process(self, data: Any) -> Any:
         if data is None:
@@ -81,7 +78,6 @@ class OutputStage:
         return data
 
 
-# ===================== ADAPTERS =====================
 class JSONAdapter(ProcessingPipeline):
     def process(self, data: Any) -> str:
         processed = self.run(data)
@@ -112,7 +108,6 @@ class StreamAdapter(ProcessingPipeline):
         return result
 
 
-# ===================== MANAGER =====================
 class NexusManager:
     def __init__(self) -> None:
         self.pipelines: List[ProcessingPipeline] = []
@@ -120,7 +115,9 @@ class NexusManager:
     def register_pipeline(self, pipeline: ProcessingPipeline) -> None:
         self.pipelines.append(pipeline)
 
-    def execute(self, pipeline: ProcessingPipeline, data: Any) -> Optional[Any]:
+    def execute(
+        self, pipeline: ProcessingPipeline, data: Any
+    ) -> Optional[Any]:
         try:
             return pipeline.process(data)
         except Exception:
@@ -146,11 +143,12 @@ class NexusManager:
         return dict(aggregated)
 
 
-# ===================== DEMO =====================
-print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===\n")
+print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===")
+print()
 
 print("Initializing Nexus Manager...")
-print("Pipeline capacity: 1000 streams/second\n")
+print("Pipeline capacity: 1000 streams/second")
+print()
 
 manager = NexusManager()
 
@@ -168,20 +166,26 @@ for p in (json_pipeline, csv_pipeline, stream_pipeline):
     p.add_stage(output_stage)
     manager.register_pipeline(p)
 
-print("\n=== Multi-Format Data Processing ===\n")
+print()
+print("=== Multi-Format Data Processing ===")
+print()
 
 print("Processing JSON data through pipeline...")
 manager.execute(json_pipeline, {"sensor": "temp", "value": 23.5, "unit": "C"})
 
-print("\nProcessing CSV data through same pipeline...")
+print()
+print("Processing CSV data through same pipeline...")
 manager.execute(csv_pipeline, "user,action,timestamp")
 
-print("\nProcessing Stream data through same pipeline...")
+print()
+print("Processing Stream data through same pipeline...")
 manager.execute(stream_pipeline, "Real-time sensor stream")
 
-print("\n=== Pipeline Chaining Demo ===")
+print()
+print("=== Pipeline Chaining Demo ===")
 print("Pipeline A -> Pipeline B -> Pipeline C")
-print("Data flow: Raw -> Processed -> Analyzed -> Stored\n")
+print("Data flow: Raw -> Processed -> Analyzed -> Stored")
+print()
 
 manager.chain_execute(
     [json_pipeline, csv_pipeline, stream_pipeline],
@@ -207,7 +211,9 @@ print(
     f"{round(stats['time'], 2)}s total processing time"
 )
 
-print("\n=== Error Recovery Test ===")
+print()
+print("=== Error Recovery Test ===")
 manager.execute(json_pipeline, None)
 
-print("\nNexus Integration complete. All systems operational.")
+print()
+print("Nexus Integration complete. All systems operational.")
