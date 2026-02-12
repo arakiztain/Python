@@ -1,4 +1,4 @@
-from CreatureCard import CreatureCard
+from ex0.CreatureCard import CreatureCard
 
 
 class DummyTarget:
@@ -8,7 +8,7 @@ class DummyTarget:
 
 def main() -> None:
     print()
-    print("=== DataDeck Card Foundatuion ===")
+    print("=== DataDeck Card Foundation ===")
     print()
 
     print("Testing Abstract Base Class Design:")
@@ -17,7 +17,7 @@ def main() -> None:
     fire_dragone = CreatureCard(
         name="Fire Dragon",
         cost=5,
-        rarity="Epic",
+        rarity="Legendary",
         attack=7,
         health=5
     )
