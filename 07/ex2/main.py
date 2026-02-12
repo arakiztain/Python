@@ -31,9 +31,9 @@ def main() -> None:
 
     print("Combat phase:")
     atack_result = elite.attack("Enemy")
-    print("Attack Result:", atack_result)
+    print("Attack result:", atack_result)
     defend_result = elite.defend(incoming_attack=5)
-    print("Defend Result:", defend_result)
+    print("Defend result:", defend_result)
     print()
 
     print("Magic phase:")
