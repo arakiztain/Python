@@ -26,7 +26,7 @@ class Deck:
             raise IndexError("Cannot draw from an empty deck")
         return self.cards.pop(0)
 
-    def get_deck_info(self) -> Dict:
+    def get_deck_stats(self) -> Dict:
         total = len(self.cards)
         stats = {
             "total_cards": total,
@@ -50,7 +50,7 @@ class Deck:
             elif "Artifact" in class_name:
                 stats["artifacts"] += 1
 
-        total_cost += card.cost
+            total_cost += card.cost
 
         stats["avg_cost"] = round(total_cost / total, 2)
         return stats

@@ -15,7 +15,7 @@ def main() -> None:
     deck.add_card(
         CreatureCard(
             name="Fire Dragon",
-            cost=5,
+            cost=4,
             rarity="Legendary",
             attack=7,
             health=5
@@ -25,7 +25,7 @@ def main() -> None:
     deck.add_card(
         SpellCard(
             name="Lightning Bolt",
-            cost=3,
+            cost=5,
             rarity="Common",
             effect_type="damage"
         )
@@ -34,14 +34,14 @@ def main() -> None:
     deck.add_card(
         ArtifactCard(
             name="Mana Crystal",
-            cost=2,
+            cost=3,
             rarity="Rare",
             durability=3,
             effect="+1 mana per turn"
         )
     )
 
-    print("Deck stats:", deck.get_deck_info())
+    print("Deck stats:", deck.get_deck_stats())
     print()
 
     print("Drawing and playing cards:")
