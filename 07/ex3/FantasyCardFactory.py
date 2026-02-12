@@ -41,7 +41,7 @@ class FantasyCardFactory(CardFactory):
         deck = {
             'hand': [
                 self.create_creature("Fire Dragon"),
-                self.create_spell("Goblin Warrior"),
+                self.create_creature("Goblin Warrior"),
                 self.create_artifact("Lightning Bolt")
             ]
         }
