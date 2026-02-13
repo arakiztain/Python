@@ -1,17 +1,17 @@
-[too.poetry]
+# poetry install --no-root
+# poetry run python loading.py
+[tool.poetry]
 name = "matrix-operator"
 version = "0.1.0"
-description = "Data analysis demo showing pip vs Poetry dependency managment"
+description = "Matrix data analysis tool"
+authors = ["your_login <your_login@student.42.fr>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-pandas = "^2.0"
-requests = "^2.31"
-matplotlib = "^3.7"
-
-[tool.poetry.dev-dependencies]
-pytest = "^7.4"
+python = "^3.10"
+pandas = "^2.0.0"
+requests = "^2.30.0"
+matplotlib = "^3.7.0"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

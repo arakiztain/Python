@@ -1,39 +1,68 @@
+#!/usr/bin/env python3
+
 import sys
 import os
+import importlib
+from typing import Dict, Tuple, Optional
 
-os.environ['MPLCONFIGDIR'] = '~/sgoinfre/'
+os.environ["MPLCONFIGDIR"] = "/tmp"
 
-def check_packages():
-    """Verifica si los paquetes necesarios están instalados y devuelve dict con estado."""
-    status = {}
-    try:
-        import pandas as pd
-        status['pandas'] = ('OK', pd.__version__, "Data manipulation ready")
-    except ImportError:
-        status['pandas'] = ('MISSING', None, "Data manipulation not available")
-    try:
-        import requests
-        status['requests'] = ('OK', requests.__version__, "Network access ready")
-    except ImportError:
-        status['requests'] = ('MISSING', None, "Network access not available")
-    try:
-        import matplotlib.pyplot as plt
-        import matplotlib
-        status['matplotlib'] = ('OK', matplotlib.__version__, "Visualization ready")
-    except ImportError:
-        status['matplotlib'] = ('MISSING', None, "Visualization not available")
+PackageStatus = Dict[str, Tuple[str, Optional[str]]]
+
+REQUIRED_PACKAGES = ["pandas", "requests", "matplotlib"]
+
+
+def detect_environment() -> str:
+    """
+    Detect the execution environment (Poetry, virtualenv/pip, or system).
+    """
+    poetry_env = os.getenv("VIRTUAL_ENV") and ".venv" in os.getenv(
+        "VIRTUAL_ENV"
+        )
+    if poetry_env:
+        return "Poetry environment detected"
+
+    if hasattr(sys, 'real_prefix') or sys.prefix != sys.base_prefix:
+        return "Virtual environment (pip) detected"
+
+    return "System Python (global environment)"
+
+
+def check_packages() -> PackageStatus:
+    """
+    Check required dependencies and return their installation status.
+
+    Returns:
+        Dictionary mapping package name to a tuple:
+        (status, version).
+    """
+    status: PackageStatus = {}
+
+    for pkg in REQUIRED_PACKAGES:
+        try:
+            module = importlib.import_module(pkg)
+            version: Optional[str] = getattr(module, "__version__", "unknown")
+            status[pkg] = ("OK", version)
+        except ImportError:
+            status[pkg] = ("MISSING", None)
+
     return status
 
-def print_dependency_status(status):
-    """Muestra mensajes de dependencia al estilo esperado"""
+
+def print_dependency_status(status: PackageStatus) -> None:
+    """
+    Print dependency status and exit if missing packages are detected.
+    """
     print("Checking dependencies:")
     missing = []
-    for pkg, (state, version, msg) in status.items():
+
+    for pkg, (state, version) in status.items():
         if state == "OK":
-            print(f"[OK] {pkg} ({version}) - {msg}")
+            print(f"[OK] {pkg} ({version}) - Ready")
         else:
-            print(f"[MISSING] {pkg} - {msg}")
+            print(f"[MISSING] {pkg} - Not installed")
             missing.append(pkg)
+
     if missing:
         print()
         print("Missing dependencies detected:", ", ".join(missing))
@@ -42,8 +71,46 @@ def print_dependency_status(status):
         print("  Poetry: poetry install")
         sys.exit(1)
 
-def run_analysis():
-    """Simula análisis de datos y genera visualización"""
+
+def compare_versions(status: PackageStatus) -> None:
+    """
+    Display installed package versions.
+    """
+    print()
+    print("Package version summary:")
+    for pkg, (state, version) in status.items():
+        if state == "OK":
+            print(f" - {pkg}: {version}")
+
+
+def fetch_matrix_data() -> Optional[dict]:
+    """
+    Fetch simulated Matrix data from a remote API using requests.
+
+    Returns:
+        JSON response as dictionary if successful,
+        otherwise None.
+    """
+    import requests
+
+    print("\nFetching Matrix data from remote source...")
+    try:
+        response = requests.get(
+            "https://jsonplaceholder.typicode.com/todos/1",
+            timeout=5
+        )
+        response.raise_for_status()
+        print("Network access confirmed.")
+        return response.json()
+    except Exception:
+        print("Remote fetch failed. Switching to local data.")
+        return None
+
+
+def run_analysis() -> None:
+    """
+    Perform data analysis and generate a visualization.
+    """
     import pandas as pd
     import matplotlib.pyplot as plt
 
@@ -56,27 +123,40 @@ def run_analysis():
         "Level": [95, 80, 70, 100, 85],
         "Status": ["active", "active", "inactive", "active", "active"]
     }
-    df = pd.DataFrame(data)
 
+    df = pd.DataFrame(data)
     df_active = df[df["Status"] == "active"]
-    plt.bar(df_active["Agent"], df_active["Level"], color="green")
+
+    plt.figure()
+    plt.bar(df_active["Agent"], df_active["Level"])
     plt.title("Active Agents in the Matrix")
-    plt.ylabel("Level")
     plt.xlabel("Agent")
+    plt.ylabel("Level")
+
     print("Generating visualization...")
-    plt.show()
+    plt.savefig("matrix_analysis.png")
 
     print()
     print("Analysis complete!")
-    print("Results saved to:", os.environ['MPLCONFIGDIR'])
+    print("Results saved to: matrix_analysis.png")
 
-def main():
-    print()
+
+def main() -> None:
+    """
+    Main execution function.
+    """
     print("LOADING STATUS: Loading programs...")
     print()
+    print("Environment:", detect_environment())
+    print()
+
     status = check_packages()
     print_dependency_status(status)
+    compare_versions(status)
+
+    fetch_matrix_data()
     run_analysis()
+
 
 if __name__ == "__main__":
     main()
