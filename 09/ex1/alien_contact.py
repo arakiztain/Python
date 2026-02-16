@@ -23,7 +23,7 @@ class AlienContact(BaseModel):
     is_verified: bool = Field(default=False)
 
     @model_validator(mode='after')
-    def business_rulles(self):
+    def business_rules(self):
         if not self.contact_id.startswith('AC'):
             raise ValueError("Contact ID must be start with 'AC'")
 
@@ -58,7 +58,7 @@ def main() -> None:
             duration_minutes=45,
             witness_count=5,
             message_received="Greetings from Zeta Reticuli",
-            is_received=True
+            is_verified=True
         )
 
         print("Valid contact report:")
