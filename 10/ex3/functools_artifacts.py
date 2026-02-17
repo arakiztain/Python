@@ -4,15 +4,11 @@ from typing import Any
 
 
 def spell_reducer(spells: list[int], operation: str) -> int:
+    """Reduce a list of spell powers using Sum, Product, Max, or Min."""
     if not spells:
         raise ValueError("Spells list cannot be empty")
 
-    operations = {
-        "Sum": add,
-        "Product": mul,
-        "Max": max,
-        "Min": min
-    }
+    operations = {"Sum": add, "Product": mul, "Max": max, "Min": min}
 
     if operation not in operations:
         raise ValueError("Invalid operation")
@@ -21,6 +17,7 @@ def spell_reducer(spells: list[int], operation: str) -> int:
 
 
 def partial_enchanter(base_enchantment: callable) -> dict[str, callable]:
+    """Return partial enchantments with power=50 for fire, ice, lightning."""
     return {
         "fire_enchant": partial(base_enchantment, power=50, element="fire"),
         "ice_enchant": partial(base_enchantment, power=50, element="ice"),
@@ -28,18 +25,20 @@ def partial_enchanter(base_enchantment: callable) -> dict[str, callable]:
             base_enchantment,
             power=50,
             element="lightning"
-            )
+            ),
     }
 
 
 @lru_cache(maxsize=None)
 def memoized_fibonacci(n: int) -> int:
+    """Return the nth Fibonacci number using memoization."""
     if n <= 1:
         return n
     return memoized_fibonacci(n - 1) + memoized_fibonacci(n - 2)
 
 
 def spell_dispatcher() -> callable:
+    """Return a singledispatch spell function for int, str, and list."""
     @singledispatch
     def cast(spell: Any):
         return f"Unknown spell type: {spell}"
@@ -60,10 +59,8 @@ def spell_dispatcher() -> callable:
     return cast
 
 
-# =========================================================================
-
-
 def base_enchantment(target: str, power: int, element: str) -> str:
+    """Return a description of the enchanted target."""
     return f"{target} enchanted with {element} power {power}"
 
 
@@ -82,8 +79,8 @@ def main() -> None:
     print(enchants["lightning_enchant"]("Armor"))
 
     print()
-    print("Testing memoized_fibonacci...")
-    print("\n".join(f"Fib[{x}]: {memoized_fibonacci(x)}" for x in [10, 15]))
+    print("Testing memoized fibonacci...")
+    print("\n".join(f"Fib({x}): {memoized_fibonacci(x)}" for x in [10, 15]))
 
     print()
     print("Testing spell dispatcher...")
