@@ -1,34 +1,53 @@
-from typing import Any
+from typing import Any, Callable
 
 
-def mage_counter() -> callable:
-    i: int = 0
+def mage_counter() -> Callable:
+    """
+    Create a closure that counts how many times it is called.
+    """
+    count: int = 0
 
-    def counter():
-        nonlocal i
-        i += 1
-        return i
+    def counter() -> int:
+        nonlocal count
+        count += 1
+        return count
+
     return counter
 
 
-def spell_accumulator(initial_power: int) -> callable:
-    power: int = initial_power
+def spell_accumulator(initial_power: int) -> Callable:
+    """
+    Create a closure that accumulates power over time.
+    """
+    total_power: int = initial_power
 
-    def accumulator():
-        nonlocal power
-        power += 1
-        return power
+    def accumulator(amount: int) -> int:
+        nonlocal total_power
+        try:
+            total_power += amount
+        except TypeError:
+            return total_power
+        return total_power
+
     return accumulator
 
 
-def enchantment_factory(enchantment_type: str) -> callable:
+def enchantment_factory(enchantment_type: str) -> Callable:
+    """
+    Create an enchantment function for a specific type.
+    """
+
     def enchant(item_name: str) -> str:
         return f"{enchantment_type} {item_name}"
+
     return enchant
 
 
-def memory_vault() -> dict[str, callable]:
-    memory: dict = {}
+def memory_vault() -> dict[str, Callable]:
+    """
+    Create a memory vault with private storage using closure.
+    """
+    memory: dict[str, Any] = {}
 
     def store(key: str, value: Any) -> None:
         memory[key] = value
@@ -38,7 +57,7 @@ def memory_vault() -> dict[str, callable]:
 
     return {
         "store": store,
-        "recall": recall
+        "recall": recall,
     }
 
 
@@ -54,11 +73,11 @@ def main() -> None:
     print("Testing spell accumulator...")
     power_count = spell_accumulator(2)
     for i in range(1, 4):
-        call = power_count()
+        call = power_count(2)
         print(f"Call {i}: {call}")
 
     print()
-    print("Testing enchantment fatory...")
+    print("Testing enchantment factory...")
     flaming = enchantment_factory("Flaming")
     frozen = enchantment_factory("Frozen")
     print(flaming("Sword"))
