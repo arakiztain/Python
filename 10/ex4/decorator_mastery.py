@@ -5,19 +5,20 @@ import random
 
 
 def spell_timer(func: callable) -> callable:
+    """Decorator to time spell casting."""
     @wraps(func)
     def wrapper(*args, **kwargs) -> Any:
         print(f"Casting {func.__name__}...")
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
-        elapsed = end_time - start_time
-        print(f"Spell completed in {elapsed:.6f} seconds")
+        print(f"Spell completed in {end_time - start_time:.6f} seconds")
         return result
     return wrapper
 
 
 def power_validator(min_power: int):
+    """Decorator factory to validate spell power."""
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -27,9 +28,7 @@ def power_validator(min_power: int):
                 power = args[-1]
             if power < min_power:
                 return "Insufficient power for this spell"
-
             return func(*args, **kwargs)
-
         return wrapper
     return decorator
 
@@ -45,8 +44,8 @@ def retry_spell(max_attempts: int) -> callable:
                 except Exception:
                     if attempt < max_attempts:
                         print(
-                            f"Spell failed, retrying... (attempt {attempt}/"
-                            f"{max_attempts})"
+                            "Spell failed, retrying..."
+                            f" (attempt {attempt}/{max_attempts})"
                             )
                     else:
                         return (
@@ -58,17 +57,21 @@ def retry_spell(max_attempts: int) -> callable:
 
 
 class MageGuild:
-    def __init__(self, mage_name: str):
+    """Mage guild with name validation and spell casting."""
+
+    def __init__(self, mage_name: str) -> None:
         if not self.validate_mage_name(mage_name):
             raise ValueError("Invalid mage name")
         self.mage_name = mage_name
 
     @staticmethod
     def validate_mage_name(name: str) -> bool:
+        """Check if mage name is valid."""
         return len(name) >= 3 and all(c.isalpha() or c.isspace() for c in name)
 
     @power_validator(10)
     def cast_spell(self, spell_name: str, power: int) -> str:
+        """Cast a spell with given power."""
         return f"Successfully cast {spell_name} with {power} power"
 
 
@@ -77,17 +80,19 @@ class MageGuild:
 
 @spell_timer
 def fireball() -> str:
+    """Cast a fireball spell."""
     return "Fireball cast!"
 
 
 @power_validator(10)
 def fireball_power(power: int) -> str:
+    """Cast fireball with specific power."""
     return f"Fireball power {power}"
 
 
 @retry_spell(5)
 def unstable_fireball():
-    """Hechizo que falla aleatoriamente"""
+    """Spell that may fail randomly."""
     if random.random() < 0.7:
         raise ValueError("Oops, spell fizzled")
     return "Fireball cast successfully!"
